@@ -1,168 +1,175 @@
-<!-- Add Bootstrap & Font Awesome so navbar renders correctly (inserted before navbar include) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <%- include('../includes/navbar') %>
 
 <% 
-  var u = (typeof user !== 'undefined' && user) ? user : (typeof currUser !== 'undefined' ? currUser : null);
-  var w = (typeof wallet !== 'undefined' && wallet) ? wallet : (typeof locals !== 'undefined' && locals.wallet ? locals.wallet : null);
+    // Get the user object (passed from the controller) or use res.locals.currUser
+    var u = (typeof user !== 'undefined' && user) ? user : (typeof currUser !== 'undefined' ? currUser : null);
 %>
 
 <style>
-  /* Layout */
-  .profile-wrap { padding: 2.5rem 0; }
-  .dashboard { display:flex; gap:2rem; align-items:flex-start; }
+    /* Layout */
+    .profile-wrap { padding: 2.5rem 0; }
+    .dashboard { display:flex; gap:2rem; align-items:flex-start; }
 
-  /* Sidebar */
-  .sidebar {
-    width: 280px;
-    background: #f5f7fa;
-    border-radius: 10px;
-    padding: 1.25rem;
-    box-shadow: 0 6px 18px rgba(15,15,15,0.04);
-    min-height: 560px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-  }
-  .avatar {
-    width:88px; height:88px; border-radius:50%;
-    background:#2f80ed; color:#fff;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-size:34px; font-weight:700; margin:0 auto;
-  }
-  .sb-name { text-align:center; margin-top:.6rem; font-weight:700; }
-  .sb-email { text-align:center; color:#6c757d; font-size:.9rem; margin-bottom:.8rem; }
+    /* Sidebar */
+    .sidebar {
+        width: 280px;
+        background: #f5f7fa;
+        border-radius: 10px;
+        padding: 1.25rem;
+        box-shadow: 0 6px 18px rgba(15,15,15,0.04);
+        min-height: 560px;
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+    }
+    .avatar {
+        width:88px; height:88px; border-radius:50%;
+        background:#2f80ed; color:#fff;
+        display:inline-flex; align-items:center; justify-content:center;
+        font-size:34px; font-weight:700; margin:0 auto;
+    }
+    .sb-name { text-align:center; margin-top:.6rem; font-weight:700; }
+    .sb-email { text-align:center; color:#6c757d; font-size:.9rem; margin-bottom:.8rem; }
 
-  .sb-nav { list-style:none; padding:0; margin:1rem 0; }
-  .sb-nav li { margin: .35rem 0; }
-  .sb-nav a {
-    display:flex; align-items:center; gap:.75rem;
-    padding:.65rem .6rem; border-radius:8px; color:#495057; text-decoration:none;
-  }
-  .sb-nav a .fa { width:18px; text-align:center; color:#6c757d; }
-  .sb-nav a:hover { background: rgba(47,128,237,0.06); color:#2f80ed; }
-  .sb-nav a.active { background:#2f80ed; color:#fff !important; }
-  .sb-nav a.active .fa { color:#fff; }
+    .sb-nav { list-style:none; padding:0; margin:1rem 0; }
+    .sb-nav li { margin: .35rem 0; }
+    .sb-nav a {
+        display:flex; align-items:center; gap:.75rem;
+        padding:.65rem .6rem; border-radius:8px; color:#495057; text-decoration:none;
+    }
+    .sb-nav a .fa { width:18px; text-align:center; color:#6c757d; }
+    .sb-nav a:hover { background: rgba(47,128,237,0.06); color:#2f80ed; }
+    .sb-nav a.active { background:#2f80ed; color:#fff !important; }
+    .sb-nav a.active .fa { color:#fff; }
 
-  .sb-footer { display:flex; gap:.5rem; margin-top:1rem; justify-content:space-between; }
-  .sb-footer a { flex:1; text-align:center; padding:.5rem .4rem; border-radius:8px; background:#fff; color:#495057; border:1px solid #e9eef5; text-decoration:none; font-size:.9rem; }
+    .sb-footer { display:flex; gap:.5rem; margin-top:1rem; justify-content:space-between; }
+    .sb-footer a { flex:1; text-align:center; padding:.5rem .4rem; border-radius:8px; background:#fff; color:#495057; border:1px solid #e9eef5; text-decoration:none; font-size:.9rem; }
 
-  /* Main */
-  .main { flex:1; }
-  .card {
-    background:#fff; border-radius:10px; padding:1rem; box-shadow:0 8px 24px rgba(20,24,31,0.04); margin-bottom:1rem;
-  }
+    /* Main */
+    .main { flex:1; }
+    .card {
+        background:#fff; border-radius:10px; padding:1rem; box-shadow:0 8px 24px rgba(20,24,31,0.04); margin-bottom:1rem;
+    }
 
-  .tabs { display:flex; gap:1rem; border-bottom:1px solid #eef3f8; padding-bottom:.5rem; margin-bottom:1rem; }
-  .tabs a { color:#2f80ed; text-decoration:none; padding:.35rem .6rem; border-radius:6px; }
-  .tabs a.active { background:#e9f2ff; border-bottom:3px solid #2f80ed; font-weight:600; }
+    .tabs { display:flex; gap:1rem; border-bottom:1px solid #eef3f8; padding-bottom:.5rem; margin-bottom:1rem; }
+    .tabs a { color:#2f80ed; text-decoration:none; padding:.35rem .6rem; border-radius:6px; }
+    .tabs a.active { background:#e9f2ff; border-bottom:3px solid #2f80ed; font-weight:600; }
 
-  .label { font-size:.9rem; color:#6c757d; margin-bottom:.35rem; }
-  .readonly {
-    width:100%; padding:.6rem .75rem; background:#fbfdff; border:1px solid #eef3f8; border-radius:8px; color:#495057;
-  }
+    .label { font-size:.9rem; color:#6c757d; margin-bottom:.35rem; }
+    .readonly {
+        width:100%; padding:.6rem .75rem; background:#fbfdff; border:1px solid #eef3f8; border-radius:8px; color:#495057;
+    }
 
-  /* Wallet tile */
-  .wallet-tile {
-    background: linear-gradient(135deg,#2f80ed,#2b6fd6);
-    color:#fff; padding:1rem 1.25rem; border-radius:8px; min-width:200px; box-shadow:0 8px 20px rgba(43,111,214,0.12);
-  }
-  .wallet-tile .small { font-size:.9rem; opacity:.95; }
-  .wallet-tile .big { font-size:1.6rem; font-weight:700; margin-top:.35rem; }
+    /* Wallet tile */
+    .wallet-tile {
+        background: linear-gradient(135deg,#2f80ed,#2b6fd6);
+        color:#fff; padding:1rem 1.25rem; border-radius:8px; min-width:200px; box-shadow:0 8px 20px rgba(43,111,214,0.12);
+    }
+    .wallet-tile .small { font-size:.9rem; opacity:.95; }
+    .wallet-tile .big { font-size:1.6rem; font-weight:700; margin-top:.35rem; }
 
-  @media (max-width:991.98px) {
-    .dashboard { flex-direction:column; }
-    .sidebar { width:100%; order:2; min-height:auto; }
-    .main { order:1; }
-  }
+    @media (max-width:991.98px) {
+        .dashboard { flex-direction:column; }
+        .sidebar { width:100%; order:2; min-height:auto; }
+        .main { order:1; }
+    }
 </style>
 
 <div class="container profile-wrap">
-  <% if (locals.error) { %><div class="alert alert-danger"><%= locals.error %></div><% } %>
-  <% if (locals.success) { %><div class="alert alert-success"><%= locals.success %></div><% } %>
-  <% if (locals.info) { %><div class="alert alert-info"><%= locals.info %></div><% } %>
+    <% if (locals.error) { %><div class="alert alert-danger"><%= locals.error %></div><% } %>
+    <% if (locals.success) { %><div class="alert alert-success"><%= locals.success %></div><% } %>
+    <% if (locals.info) { %><div class="alert alert-info"><%= locals.info %></div><% } %>
 
-  <% if (!u) { %>
-    <div class="alert alert-warning">You are not signed in. Please <a href="/login">log in</a> to view your profile.</div>
-  <% } else { %>
+    <% if (!u) { %>
+        <div class="alert alert-warning">You are not signed in. Please <a href="/login">log in</a> to view your profile.</div>
+    <% } else { %>
 
-  <div class="dashboard">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div>
-        <div class="text-center">
-          <div class="avatar"><%= u.username ? u.username.charAt(0).toUpperCase() : 'U' %></div>
-          <div class="sb-name"><%= u.username %></div>
-          <div class="sb-email"><%= u.email || '' %></div>
-        </div>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div>
+                <div class="text-center">
+                    <div class="avatar"><%= u.username ? u.username.charAt(0).toUpperCase() : 'U' %></div>
+                    <div class="sb-name"><%= u.username %></div>
+                    <div class="sb-email"><%= u.email || '' %></div>
+                </div>
 
-        <ul class="sb-nav">
-          <li><a href="/listings"><i class="fa fa-compass"></i> Explore</a></li>
-          <li><a href="/bookings"><i class="fa fa-calendar-check"></i> My Bookings</a></li>
-          <li><a href="/profile" class="active"><i class="fa fa-user"></i> My Profile</a></li>
-          <li><a href="/listings"><i class="fa fa-search"></i> Search</a></li>
-          <li><a href="/listings/new"><i class="fa fa-plus-square"></i> Add Hotel</a></li>
-        </ul>
-      </div>
+                <ul class="sb-nav">
+                    <li><a href="/listings"><i class="fa fa-compass"></i> Explore</a></li>
+                    <li><a href="/bookings"><i class="fa fa-calendar-check"></i> My Bookings</a></li>
+                    <li><a href="/profile" class="active"><i class="fa fa-user"></i> My Profile</a></li>
+                    <li><a href="/listings"><i class="fa fa-search"></i> Search</a></li>
+                    <li><a href="/listings/new"><i class="fa fa-plus-square"></i> Add Hotel</a></li>
+                </ul>
+            </div>
 
-      <div>
-        <div class="sb-footer">
-          <a href="/bookings">My Bookings</a>
-          <a href="/wallet">Wallet</a>
-        </div>
-      </div>
-    </aside>
+            <div>
+                <div class="sb-footer">
+                    <a href="/bookings">My Bookings</a>
+                    <a href="/wallet">Wallet</a>
+                </div>
+            </div>
+        </aside>
 
-    <!-- Main content -->
-    <main class="main">
-      <div class="card">
-        <h5 style="margin-bottom:.5rem">Profile Details</h5>
+        <main class="main">
+            <div class="card">
+                <h5 style="margin-bottom:.5rem">Profile Details</h5>
 
-        <div class="tabs">
-          <a class="active" href="#">Profile Details</a>
-          <a href="/wallet">Wallet</a>
-        </div>
+                <div class="tabs">
+                    <a class="active" href="#">Profile Details</a>
+                    <a href="/wallet">Wallet</a>
+                </div>
 
-        <div>
-          <div class="mb-3">
-            <div class="label">Username</div>
-            <input class="readonly" value="<%= u.username %>" disabled>
-          </div>
+                <div>
+                    <div class="mb-3">
+                        <div class="label">Username</div>
+                        <input class="readonly" value="<%= u.username %>" disabled>
+                    </div>
 
-          <div class="mb-3">
-            <div class="label">Email</div>
-            <input class="readonly" value="<%= u.email || '' %>" disabled>
-          </div>
+                    <div class="mb-3">
+                        <div class="label">Email</div>
+                        <input class="readonly" value="<%= u.email || '' %>" disabled>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Phone Number</div>
+                        <input class="readonly" value="<%= u.phoneNumber || '' %>" disabled>
+                    </div>
 
-          <div class="mb-3">
-            <div class="label">Member since</div>
-            <div class="readonly"><%= u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A' %></div>
-          </div>
-        </div>
-      </div>
+                    <div class="mb-3">
+                        <div class="label">Member since</div>
+                        <div class="readonly"><%= u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A' %></div>
+                    </div>
+                </div>
+            </div>
 
-      <div class="card">
-        <h5 style="margin-bottom:.75rem">Wallet</h5>
-        <div class="d-flex align-items-start gap-3">
-          <div class="wallet-tile">
-            <div class="small">Total Coins</div>
-            <div class="big">₹<%= w && w.coins ? w.coins : 0 %></div>
-            <div style="margin-top:.45rem; font-size:.9rem;"><a href="/wallet" style="color:rgba(255,255,255,0.95); text-decoration:underline;">View Transactions</a></div>
-          </div>
+            <div class="card">
+                <h5 style="margin-bottom:.75rem">Wallet</h5>
+                <div class="d-flex align-items-start gap-3">
+                    <div class="wallet-tile">
+                        <div class="small">Total Coins</div>
+                        <div class="big">₹<%= u.walletCoins ? u.walletCoins : 0 %></div>
+                        <div style="margin-top:.45rem; font-size:.9rem;"><a href="/wallet" style="color:rgba(255,255,255,0.95); text-decoration:underline;">View Transactions</a></div>
+                    </div>
 
-          <div class="flex-fill">
-            <p class="mb-2 text-muted">Coins are credited automatically when guests book your listings. Withdrawals will be available soon.</p>
-            <a href="/wallet" class="btn btn-outline-primary btn-sm">Go to Wallet</a>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
+                    <div class="flex-fill">
+                        <p class="mb-2 text-muted">Coins are credited automatically when guests book your listings. Withdrawals will be available soon.</p>
+                        
+                        <form action="/wallet/add" method="POST" class="d-flex gap-2">
+                            <input type="number" name="amount" value="100" min="1" required class="form-control form-control-sm" style="width:100px;">
+                            <button type="submit" class="btn btn-primary btn-sm">Add Test Coins</button>
+                        </form>
 
-  <% } %>
+                        <a href="/wallet" class="btn btn-outline-primary btn-sm mt-2">Go to Wallet</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <% } %>
 </div>
 
-<!-- Optional: load Bootstrap JS bundle for collapse behavior (inserted at end of file) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
